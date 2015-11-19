@@ -38,15 +38,18 @@ public class Search extends Application {
     @GET
     @Path("{words}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Music> data(@PathParam("words") String words) {
-        List<Music> cad = null;
-        try{
-            cad = indexSearcher.search(words);
-        }catch(IOException | ParseException e){
-            e.printStackTrace();
-            cad = Collections.EMPTY_LIST;
+    public SearchResponse BasicSearch(@PathParam("words") String words) {
+        SearchResponse searchResponse = null;
+        if (words.length() < 100) {
+            try {
+                searchResponse = indexSearcher.search(words);
+            } catch (IOException | ParseException e) {
+                e.printStackTrace();
+            }
+        } else {
+            searchResponse = SearchResponse.createErrorResponse();
         }
-        return cad;
+        return searchResponse;
     }
 
     @POST

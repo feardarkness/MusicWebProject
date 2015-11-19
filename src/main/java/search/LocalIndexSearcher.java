@@ -32,7 +32,8 @@ public class LocalIndexSearcher {
     public LocalIndexSearcher() {
     }
 
-    public List<Music> search(String palabra) throws IOException, ParseException {
+    public SearchResponse search(String palabra) throws IOException, ParseException {        
+        SearchResponse searchResponse = new SearchResponse();
         List<Music> musicList = new ArrayList();
         TopDocs hits = null;
         QueryParser parser = null;
@@ -48,17 +49,16 @@ public class LocalIndexSearcher {
             System.out.println(hits.totalHits);
             for (int i = 0; i < hits.scoreDocs.length; i++) {
                 System.out.println(hits.scoreDocs[i]);
-                Document doc = isearcher.doc(hits.scoreDocs[i].doc);
-                System.out.println(doc.getField("titulo"));
-                System.out.println(doc.getField("letra"));
-                System.out.println(doc.getField("id"));
+                Document doc = isearcher.doc(hits.scoreDocs[i].doc);                
                 Music music = new Music();
                 music.setArtist(doc.getField("artista").stringValue());
                 music.setLyric(doc.getField("letra").stringValue());
                 music.setTitle(doc.getField("titulo").stringValue());
                 musicList.add(music);
             }
-        }
-        return musicList;
+        }        
+        searchResponse.setMusicFound(musicList);
+        searchResponse.setTotalFound(hits.totalHits);
+        return searchResponse;
     }
 }
